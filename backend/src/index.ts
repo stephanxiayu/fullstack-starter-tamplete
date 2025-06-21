@@ -5,6 +5,9 @@ import connectToDatabse from "./config/db";
 import { APP_ORIGIN, NODE_ENV, PORT } from "./constants/env";
 import cookieParser from "cookie-parser";
 import errorHandler from "./middleware/errorHandler";
+import catchErrors from "./utils/catchErros";
+import { OK } from "./constants/http";
+import authRoutes from "./routes/auth.routes";
 
 const app = express();
 
@@ -17,18 +20,18 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.get("/", async (req, res, next) => {
-  try {
-    throw new Error("unhandable");
-    res.send("I am alive, juhuu!");
-  } catch (error) {
-    next(error);
-  }
-});
+// app.get(
+//   "/",
+//   catchErrors(async (req, res, next) => {
+//     // throw new Error("unhandable");
+//     res.status(OK).json({ status: "I am alive" });
+//   })
+// );
 
+app.use("/auth", authRoutes);
 app.use(errorHandler);
 
-app.listen(4004, async () => {
+app.listen(PORT, async () => {
   console.log(`server runs at ${PORT} at ${NODE_ENV}`);
   await connectToDatabse();
 });
