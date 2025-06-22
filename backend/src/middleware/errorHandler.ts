@@ -20,8 +20,7 @@ const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   console.log(`PATH: ${req.path}`, error);
 
   if (error instanceof z.ZodError) {
-    sendZodError(res, error);
-    return;
+    return sendZodError(res, error);
   }
 
   res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error");
