@@ -52,4 +52,5 @@ export const createAccount = async (data: CreateAccountParams) => {
       expiresIn: "15m",
     }
   );
+  return { user, accessToken, refreshToken };
 };
