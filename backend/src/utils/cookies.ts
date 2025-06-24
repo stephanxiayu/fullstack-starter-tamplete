@@ -17,6 +17,7 @@ const getAccessTokenCookieOptions = (): CookieOptions => ({
 const getrefreshTokenCookieOptions = (): CookieOptions => ({
   ...defaults,
   expires: thirtyDaysFromNow(),
+  path: "/auth/refresh",
 });
 
 type Prams = {
@@ -25,4 +26,6 @@ type Prams = {
   refreshToken: string;
 };
 export const setAuthCookies = ({ res, accessToken, refreshToken }: Prams) =>
-  res.cookie("accessToken", accessToken).cookie("refreshToken", refreshToken);
+  res
+    .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+    .cookie("refreshToken", refreshToken, getrefreshTokenCookieOptions());
