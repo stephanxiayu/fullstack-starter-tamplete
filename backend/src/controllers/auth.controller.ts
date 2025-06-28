@@ -1,4 +1,4 @@
-import { CREATED } from "../constants/http";
+import { CREATED, OK } from "../constants/http";
 import { createAccount, loginUser } from "../services/auth.service";
 import catchErrors from "../utils/catchErros";
 import z from "zod";
@@ -23,5 +23,9 @@ export const loginHandler = catchErrors(async (req, res) => {
     ...req.body,
     userAgent: req.headers["user-agent"],
   });
-  const {} = await loginUser(request);
+  const { accessToken, refreshToken } = await loginUser(request);
+
+  return setAuthCookies({ res, accessToken, refreshToken })
+    .status(OK)
+    .json({ message: "Login Successfull" });
 });
