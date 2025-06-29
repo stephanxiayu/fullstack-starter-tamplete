@@ -2,7 +2,7 @@ import { CookieOptions, Response } from "express";
 import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date";
 
 const secure = process.env.NODE_ENV !== "development";
-
+export const REFRESH_PATH = "/auth/refresh";
 const defaults: CookieOptions = {
   sameSite: "strict",
   httpOnly: true,
@@ -17,7 +17,7 @@ const getAccessTokenCookieOptions = (): CookieOptions => ({
 const getrefreshTokenCookieOptions = (): CookieOptions => ({
   ...defaults,
   expires: thirtyDaysFromNow(),
-  path: "/auth/refresh",
+  path: REFRESH_PATH,
 });
 
 type Prams = {
@@ -29,3 +29,8 @@ export const setAuthCookies = ({ res, accessToken, refreshToken }: Prams) =>
   res
     .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
     .cookie("refreshToken", refreshToken, getrefreshTokenCookieOptions());
+
+export const clearAuthCookies = (res: Response) =>
+  res
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken", { path: REFRESH_PATH });
