@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   loginHandler,
   logoutHandler,
+  refreshHandler,
   registerHandler,
 } from "../controllers/auth.controller";
 

@@ -2,6 +2,7 @@ import { ErrorRequestHandler, Response } from "express";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../constants/http";
 import { z } from "zod"; // «{ z }» statt Default-Import!
 import AppError from "../utils/AppError";
+import { clearAuthCookies, REFRESH_PATH } from "../utils/cookies";
 
 // --- Helfer ---
 const sendZodError = (res: Response, error: z.ZodError): void => {
@@ -26,6 +27,10 @@ const handleAppError = (res: Response, error: AppError) => {
 // --- Error-Middleware ---
 const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   console.log(`PATH: ${req.path}`, error);
+
+  if (req.path === REFRESH_PATH) {
+    clearAuthCookies(res);
+  }
 
   if (error instanceof z.ZodError) {
     return sendZodError(res, error);

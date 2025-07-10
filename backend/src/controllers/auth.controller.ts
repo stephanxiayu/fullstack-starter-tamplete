@@ -1,8 +1,17 @@
 import { CREATED, OK, UNAUTHORIZED } from "../constants/http";
-import { createAccount, loginUser } from "../services/auth.service";
+import {
+  createAccount,
+  loginUser,
+  refreshUserAccessToken,
+} from "../services/auth.service";
 import catchErrors from "../utils/catchErros";
 import z from "zod";
-import { clearAuthCookies, setAuthCookies } from "../utils/cookies";
+import {
+  clearAuthCookies,
+  getAccessTokenCookieOptions,
+  getrefreshTokenCookieOptions,
+  setAuthCookies,
+} from "../utils/cookies";
 import { loginSchema, registerSchema } from "./auth.schemas";
 import { verifyToken } from "../utils/jwt";
 import SessionModel from "../models/session.model";
@@ -34,8 +43,8 @@ export const loginHandler = catchErrors(async (req, res) => {
 });
 
 export const logoutHandler = catchErrors(async (req, res) => {
-  const accessToken = req.cookies.accessToken as string |undefined;
-  const { payload, error } = verifyToken(accessToken ||"");
+  const accessToken = req.cookies.accessToken as string | undefined;
+  const { payload, error } = verifyToken(accessToken || "");
   if (payload) {
     await SessionModel.findByIdAndDelete(payload.sessionId);
   }
@@ -44,7 +53,21 @@ export const logoutHandler = catchErrors(async (req, res) => {
   });
 });
 
-export const refreshHandler= catchErrors(async (req, res) => {
-  const refreshToken = req.cookies.refreshToken as string |undefined;
-  appAssert(refreshToken, UNAUTHORIZED, "Missing refresh Token")
-}
+export const refreshHandler = catchErrors(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken as string | undefined;
+  appAssert(refreshToken, UNAUTHORIZED, "Missing refresh Token");
+
+  const { accessToken, newRefreshToken } =
+    await refreshUserAccessToken(refreshToken);
+
+  if (newRefreshToken) {
+    res.cookie("refreshToken", newRefreshToken, getrefreshTokenCookieOptions());
+  }
+
+  return res
+    .status(OK)
+    .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+    .json({
+      message: "Access Token refreshed",
+    });
+});

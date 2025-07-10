@@ -101,9 +101,21 @@ export const refreshUserAccessToken = async (refreshToken: string) => {
     session.expiresAt = thirtyDaysFromNow();
     await session.save();
   }
-
+  const newRefreshToken = sessionNeedsRefresh
+    ? signToken(
+        {
+          sessionId: session._id,
+        },
+        refreshTokenSignOptions
+      )
+    : undefined;
   const accessToken = signToken({
     userId: session.userId,
     sessionId: session._id,
   });
+
+  return {
+    accessToken,
+    newRefreshToken: newRefreshToken,
+  };
 };
