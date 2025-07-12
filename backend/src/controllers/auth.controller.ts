@@ -12,7 +12,11 @@ import {
   getrefreshTokenCookieOptions,
   setAuthCookies,
 } from "../utils/cookies";
-import { loginSchema, registerSchema } from "./auth.schemas";
+import {
+  loginSchema,
+  registerSchema,
+  verificationCodeSchema,
+} from "./auth.schemas";
 import { verifyToken } from "../utils/jwt";
 import SessionModel from "../models/session.model";
 import appAssert from "../utils/appAssert";
@@ -70,4 +74,8 @@ export const refreshHandler = catchErrors(async (req, res) => {
     .json({
       message: "Access Token refreshed",
     });
+});
+
+export const verifyEmailHandler = catchErrors(async (req, res) => {
+  const verificationCode = verificationCodeSchema.parse(req.params.code);
 });
