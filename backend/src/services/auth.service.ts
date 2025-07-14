@@ -141,4 +141,9 @@ export const verifyEmail = async (code: string) => {
     { new: true }
   );
   appAssert(updatedUser, INTERNAL_SERVER_ERROR, "failed to verify email");
+
+  await validCode.deleteOne();
+  return {
+    user: updatedUser.omitPassword(),
+  };
 };

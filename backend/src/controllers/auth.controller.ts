@@ -3,6 +3,7 @@ import {
   createAccount,
   loginUser,
   refreshUserAccessToken,
+  verifyEmail,
 } from "../services/auth.service";
 import catchErrors from "../utils/catchErros";
 import z from "zod";
@@ -78,4 +79,9 @@ export const refreshHandler = catchErrors(async (req, res) => {
 
 export const verifyEmailHandler = catchErrors(async (req, res) => {
   const verificationCode = verificationCodeSchema.parse(req.params.code);
+
+  await verifyEmail(verificationCode);
+  return res.status(OK).json({
+    message: "Email was Successfully verified",
+  });
 });
