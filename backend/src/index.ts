@@ -8,6 +8,7 @@ import errorHandler from "./middleware/errorHandler";
 import catchErrors from "./utils/catchErros";
 import { OK } from "./constants/http";
 import authRoutes from "./routes/auth.routes";
+import authenticate from "./middleware/authenticate";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(cookieParser());
 // );
 
 app.use("/auth", authRoutes);
+app.use("/user", authenticate, userRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, async () => {
