@@ -23,13 +23,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-// app.get(
-//   "/",
-//   catchErrors(async (req, res, next) => {
-//     // throw new Error("unhandable");
-//     res.status(OK).json({ status: "I am alive" });
-//   })
-// );
+
 
 app.use("/auth", authRoutes);
 app.use("/user", authenticate, userRoutes);
